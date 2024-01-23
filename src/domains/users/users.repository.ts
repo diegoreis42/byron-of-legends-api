@@ -5,7 +5,7 @@ import { User } from './users.entity';
 import { IUser } from './user.interface';
 
 @Injectable()
-export class UserRepository {
+export class UsersRepository {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,

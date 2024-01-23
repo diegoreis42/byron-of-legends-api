@@ -3,7 +3,9 @@ import {
   Controller,
   Get,
   Post,
+  Req,
   Request,
+  Res,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -13,6 +15,7 @@ import { UserDto } from '../users/user.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -36,6 +39,17 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   getMe(@Request() req) {
+    return req.user;
+  }
+  @Get()
+  @UseGuards(AuthGuard('google'))
+  async googleAuth(@Req() req) {
+    return;
+  }
+
+  @Get('google-redirect')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req) {
     return req.user;
   }
 }

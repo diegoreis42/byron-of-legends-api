@@ -5,17 +5,16 @@ import {
   Post,
   Req,
   Request,
-  Res,
   UseGuards,
   UsePipes,
-  ValidationPipe,
+  ValidationPipe
 } from '@nestjs/common';
-import { UsersRepository } from '../users/users.repository';
+import { AuthGuard } from '@nestjs/passport';
 import { UserDto } from '../users/user.dto';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { UsersRepository } from '../users/users.repository';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { AuthGuard } from '@nestjs/passport';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
 @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -23,7 +22,7 @@ export class AuthController {
   constructor(
     private userRepository: UsersRepository,
     private authService: AuthService,
-  ) {}
+  ) { }
 
   @Post('/register')
   register(@Body() body: UserDto) {

@@ -15,7 +15,7 @@ export class UserDto implements IUser {
   @IsNotEmpty()
   email: string;
 
-  //@IsStrongPassword()
+  @IsStrongPassword()
   @IsNotEmpty()
   password: string;
 }

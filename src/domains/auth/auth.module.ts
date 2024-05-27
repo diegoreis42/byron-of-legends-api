@@ -8,7 +8,6 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy, LocalStrategy } from './strategies';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -23,4 +22,4 @@ import { JwtStrategy, LocalStrategy } from './strategies';
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
 })
-export class AuthModule { }
+export class AuthModule {}

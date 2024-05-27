@@ -1,5 +1,5 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 
@@ -15,10 +15,15 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/auth/register (POST)', () => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
+      .post('/auth/register')
+      .send({
+        email: 'diegovarella@byronsolutions.com',
+        name: 'diego',
+        password: 'asdf123!@',
+      })
+      .expect(201)
       .expect('Hello World!');
   });
 });

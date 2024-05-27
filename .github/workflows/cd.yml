@@ -1,10 +1,9 @@
 name: Continuous Integration
-run-name: $({{ github.actor }) is deploying ot staging
+run-name: $({{ github.actor }}) is deploying ot staging
 on:
-  merge:
+  push:
     branches: 
       - stage
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,6 +19,6 @@ jobs:
         script_stop: true
         script: |
           cd ~/byron-of-legends-api
-          git pull origin master
+          git pull origin main
           docker compose down
-          docker compose up --build --remove-orphans
+          docker compose up -d --build --remove-orphans

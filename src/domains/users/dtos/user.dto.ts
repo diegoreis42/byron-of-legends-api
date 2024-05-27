@@ -2,20 +2,27 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
-  IsStrongPassword,
+  IsUUID,
+  MinLength,
 } from 'class-validator';
-import { IUser } from './user.interface';
+import { IUser } from '../user.interface';
 
 export class UserDto implements IUser {
+  @IsUUID()
+  id?: string;
+
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsEmail()
+  @IsEmail({
+    domain_specific_validation: true,
+    host_whitelist: ['byronsolutions.com'],
+  })
   @IsNotEmpty()
   email: string;
 
-  @IsStrongPassword()
   @IsNotEmpty()
+  @MinLength(5)
   password: string;
 }

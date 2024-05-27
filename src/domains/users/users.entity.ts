@@ -6,7 +6,7 @@ export class User {
   id: string;
 
   @Index()
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   email: string;
 
   @Column({ nullable: false })
@@ -14,4 +14,11 @@ export class User {
 
   @Column({ nullable: false })
   password: string;
+
+  @Column({ nullable: true })
+  @Index()
+  reset_password_token?: string;
+
+  @Column({ nullable: true })
+  reset_password_token_time?: string;
 }

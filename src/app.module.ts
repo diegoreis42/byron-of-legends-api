@@ -1,8 +1,11 @@
+import { MailerModule } from '@nestjs-modules/mailer';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { Module } from '@nestjs/common';
-import { DomainsModule } from './domains/domains.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { User } from './domains/users/users.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DomainsModule } from './domains/domains.module';
+import { User } from './domains/users';
+import { EmailModule } from './infra/email';
 
 @Module({
   imports: [
@@ -16,7 +19,28 @@ import { User } from './domains/users/users.entity';
       entities: [User],
       synchronize: true,
     }),
+
+    MailerModule.forRoot({
+      transport: {
+        host: String(process.env.MAIL_HOST),
+        port: Number(process.env.MAIL_PORT),
+        secure: false,
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS,
+        },
+      },
+      template: {
+        dir: __dirname + '/../src/infra/email/templates',
+        adapter: new PugAdapter({ inlineCssEnabled: true }),
+        options: {
+          strict: true,
+          pool: true,
+        },
+      },
+    }),
     DomainsModule,
+    EmailModule,
   ],
 })
 export class AppModule {}

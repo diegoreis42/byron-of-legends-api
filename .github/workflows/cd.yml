@@ -1,0 +1,25 @@
+name: Continuous Integration
+run-name: $({{ github.actor }) is deploying ot staging
+on:
+  push:
+    branches: 
+      - main
+
+  deploy:
+    needs: [test]
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: SSH and deploy node app
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.SSH_PORT }}
+        script_stop: true
+        script: |
+          cd ~/byron-of-legends-api
+          git pull origin master
+          docker compose down
+          docker compose up --build --remove-orphans

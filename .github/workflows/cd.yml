@@ -1,7 +1,7 @@
 name: Continuous Integration
 run-name: $({{ github.actor }) is deploying ot staging
 on:
-  push:
+  pull_request:
     branches: 
       - main
 

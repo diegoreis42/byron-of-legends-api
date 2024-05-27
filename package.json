@@ -94,7 +94,9 @@
   },
   "lint-staged": {
     "*.ts": [
-      "eslint 'src/**' --fix"
+      "eslint 'src/**' --fix",
+      "prettier --write",
+      "git add ."
     ]
   }
 }

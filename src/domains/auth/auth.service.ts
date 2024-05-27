@@ -2,7 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -22,7 +22,7 @@ export class AuthService {
     private userService: UsersService,
     private jwtService: JwtService,
     private emailService: AuthEmailService,
-  ) { }
+  ) {}
 
   async createUser(user: IUser): Promise<IUser> {
     const userDB = await this.usersRepository.findOneByEmail(user.email);
@@ -42,6 +42,7 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersRepository.findOneByEmail(email);
     if (user && (await bcrypt.compare(password, user.password))) {
+      /* eslint-disable */
       const { password, ...result } = user;
       return result;
     }
@@ -70,10 +71,11 @@ export class AuthService {
   }
 
   async resetPassword(payload: ResetPasswordDto) {
-    const tokenHashed = createHash(AuthEnum.HASH_ALGORITHM).update(payload.token).digest('hex');
+    const tokenHashed = createHash(AuthEnum.HASH_ALGORITHM)
+      .update(payload.token)
+      .digest('hex');
 
     const userDB = await this.userService.findByHashedToken(tokenHashed);
-
 
     if (userDB.reset_password_token !== tokenHashed) {
       throw new UnauthorizedException('Token incorreto');

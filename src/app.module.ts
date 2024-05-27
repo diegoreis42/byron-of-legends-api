@@ -7,7 +7,6 @@ import { DomainsModule } from './domains/domains.module';
 import { User } from './domains/users';
 import { EmailModule } from './infra/email';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -44,4 +43,4 @@ import { EmailModule } from './infra/email';
     EmailModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

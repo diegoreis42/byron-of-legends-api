@@ -5,4 +5,4 @@ import { UsersModule } from './users';
 @Module({
   imports: [AuthModule, UsersModule],
 })
-export class DomainsModule { }
+export class DomainsModule {}

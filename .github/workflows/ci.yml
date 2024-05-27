@@ -1,5 +1,5 @@
 name: Continuous Integration
-run-name: $({{ github.actor }) is deploying ot staging
+run-name: Is deploying to main
 on:
   pull_request:
     branches: ['*']

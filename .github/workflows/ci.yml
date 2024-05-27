@@ -1,5 +1,5 @@
 name: Continuous Integration
-run-name: Is deploying to main
+run-name: Is running tests
 on:
   pull_request:
     branches: ['*']

@@ -4,6 +4,7 @@ on:
   merge:
     branches: 
       - stage
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

@@ -1,4 +1,5 @@
-name: ci
+name: Continuous Integration
+run-name: $({{ github.actor }) is deploying ot staging
 on:
   pull_request:
     branches: ['*']

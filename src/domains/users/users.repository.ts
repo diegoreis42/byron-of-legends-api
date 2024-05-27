@@ -9,7 +9,7 @@ export class UsersRepository {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   create(user: IUser): Promise<User> {
     return this.userRepository.save(this.userRepository.create(user));
@@ -21,5 +21,9 @@ export class UsersRepository {
 
   findOneByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOneBy({ email });
+  }
+
+  findOneByHashedToken(token: string): Promise<User | null> {
+    return this.userRepository.findOneBy({ reset_password_token: token });
   }
 }

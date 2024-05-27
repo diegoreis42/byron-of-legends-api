@@ -2,21 +2,24 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
-  UnauthorizedException,
+  UnauthorizedException
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { createHash, randomUUID } from 'crypto';
 import { AuthEmailService } from 'src/infra/email/auth-email.service';
+import { UserEmailDto } from '../users/dtos';
 import { IUser } from '../users/user.interface';
 import { UsersRepository } from '../users/users.repository';
+import { UsersService } from '../users/users.service';
 import { AuthEnum } from './auth.enum';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersRepository: UsersRepository,
+    private userService: UsersService,
     private jwtService: JwtService,
     private emailService: AuthEmailService,
   ) { }
@@ -54,50 +57,45 @@ export class AuthService {
     };
   }
 
-  async requestResetPassword(user) {
+  async requestResetPassword(userEmail: UserEmailDto) {
+    const userDB = await this.userService.findOneByEmail(userEmail.email);
     const token = randomUUID();
     const hash = createHash(AuthEnum.HASH_ALGORITHM)
       .update(token)
       .digest('hex');
-    let userDB = await this.usersRepository.findOneByEmail(user.email);
     userDB.reset_password_token = hash;
 
     await this.usersRepository.save(userDB);
-    this.emailService.resetPassword(user, token);
+    this.emailService.resetPassword(userDB, token);
   }
 
-  async resetPassword(user: IUser, token: string) {
-    const userDB = await this.usersRepository.findOneByEmail(user.email);
+  async resetPassword(payload: ResetPasswordDto) {
+    const tokenHashed = createHash(AuthEnum.HASH_ALGORITHM).update(payload.token).digest('hex');
 
-    if (!userDB) {
-      throw new NotFoundException(`Usuário ${user.email} não encontrado`);
-    }
+    const userDB = await this.userService.findByHashedToken(tokenHashed);
 
-    const hash = createHash(AuthEnum.HASH_ALGORITHM)
-      .update(token)
-      .digest('hex');
 
-    if (userDB.reset_password_token !== hash) {
+    if (userDB.reset_password_token !== tokenHashed) {
       throw new UnauthorizedException('Token incorreto');
     }
 
     const tokenExpirationDate = new Date(userDB.reset_password_token_time);
     const currentTime = new Date();
     const expirationTime = new Date(
-      tokenExpirationDate.getTime() + AuthEnum.EXP_TIME_RESET_PASSWD,
+      tokenExpirationDate.getTime() + AuthEnum.EXP_TIME_RESET_PASSWORD,
     );
 
     if (currentTime > expirationTime) {
       throw new BadRequestException('Tempo expirado');
     }
 
-    if (await bcrypt.compare(user.password, userDB.password)) {
+    if (await bcrypt.compare(payload.password, userDB.password)) {
       throw new BadRequestException('Senha não pode ser igual a anterior');
     }
 
     this.usersRepository.create({
       ...userDB,
-      password: await bcrypt.hash(user.password, AuthEnum.SALT_ROUND),
+      password: await bcrypt.hash(payload.password, AuthEnum.SALT_ROUND),
     });
   }
 }

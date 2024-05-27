@@ -16,8 +16,9 @@ export class User {
   password: string;
 
   @Column({ nullable: true })
-  reset_password_token: string;
+  @Index()
+  reset_password_token?: string;
 
   @Column({ nullable: true })
-  reset_password_token_time: string;
+  reset_password_token_time?: string;
 }

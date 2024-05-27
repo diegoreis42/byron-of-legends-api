@@ -4,8 +4,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DomainsModule } from './domains/domains.module';
-import { User } from './domains/users/users.entity';
-import { EmailModule } from './infra/email/email.module';
+import { User } from './domains/users';
+import { EmailModule } from './infra/email';
+
 
 @Module({
   imports: [
@@ -43,4 +44,4 @@ import { EmailModule } from './infra/email/email.module';
     EmailModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

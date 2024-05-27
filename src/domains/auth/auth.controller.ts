@@ -9,11 +9,12 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UserDto } from '../users/user.dto';
-import { UsersRepository } from '../users/users.repository';
+import { UsersRepository } from '../users';
+import { UserDto, UserEmailDto } from '../users/dtos';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { ResetPasswordDto } from './dtos';
+import { JwtAuthGuard, LocalAuthGuard } from './guards';
+
 
 @Controller('auth')
 @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -21,7 +22,7 @@ export class AuthController {
   constructor(
     private userRepository: UsersRepository,
     private authService: AuthService,
-  ) {}
+  ) { }
 
   @Post('/register')
   register(@Body() body: UserDto) {
@@ -40,14 +41,14 @@ export class AuthController {
     return req.user;
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('reset-password')
-  requestResetPassword(@Request() req) {
-    return this.authService.requestResetPassword(req.user);
+
+  @Post('reset-password/token')
+  requestResetPassword(@Body() user: UserEmailDto) {
+    return this.authService.requestResetPassword(user);
   }
 
-  @Post('reset-password/:token')
-  resetPassword(@Param('token') token: string, @Body() user: UserDto) {
-    return this.authService.resetPassword(user, token);
+  @Post('reset-password')
+  resetPassword(@Body() payload: ResetPasswordDto) {
+    return this.authService.resetPassword(payload);
   }
 }

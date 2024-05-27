@@ -2,19 +2,19 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
-  Req,
   Request,
   UseGuards,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { UserDto } from '../users/user.dto';
-import { UsersRepository } from '../users/users.repository';
+import { UsersRepository } from '../users';
+import { UserDto, UserEmailDto } from '../users/dtos';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { ResetPasswordDto } from './dtos';
+import { JwtAuthGuard, LocalAuthGuard } from './guards';
+
 
 @Controller('auth')
 @UsePipes(new ValidationPipe({ whitelist: true }))
@@ -26,7 +26,7 @@ export class AuthController {
 
   @Post('/register')
   register(@Body() body: UserDto) {
-    return this.userRepository.create(body);
+    return this.authService.createUser(body);
   }
 
   @UseGuards(LocalAuthGuard)
@@ -40,15 +40,15 @@ export class AuthController {
   getMe(@Request() req) {
     return req.user;
   }
-  @Get()
-  @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {
-    return;
+
+
+  @Post('reset-password/token')
+  requestResetPassword(@Body() user: UserEmailDto) {
+    return this.authService.requestResetPassword(user);
   }
 
-  @Get('google-redirect')
-  @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req) {
-    return req.user;
+  @Post('reset-password')
+  resetPassword(@Body() payload: ResetPasswordDto) {
+    return this.authService.resetPassword(payload);
   }
 }

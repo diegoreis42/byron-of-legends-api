@@ -19,7 +19,7 @@ export class AuthService {
     private usersRepository: UsersRepository,
     private jwtService: JwtService,
     private emailService: AuthEmailService,
-  ) {}
+  ) { }
 
   async createUser(user: IUser): Promise<IUser> {
     const userDB = await this.usersRepository.findOneByEmail(user.email);
@@ -59,7 +59,6 @@ export class AuthService {
     const hash = createHash(AuthEnum.HASH_ALGORITHM)
       .update(token)
       .digest('hex');
-    console.log(token);
     let userDB = await this.usersRepository.findOneByEmail(user.email);
     userDB.reset_password_token = hash;
 
@@ -69,7 +68,6 @@ export class AuthService {
 
   async resetPassword(user: IUser, token: string) {
     const userDB = await this.usersRepository.findOneByEmail(user.email);
-    console.log(userDB);
 
     if (!userDB) {
       throw new NotFoundException(`Usuário ${user.email} não encontrado`);
